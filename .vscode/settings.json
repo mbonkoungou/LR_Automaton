@@ -34,6 +34,9 @@
         "streambuf": "cpp",
         "string_view": "cpp",
         "tuple": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "__split_buffer": "cpp",
+        "deque": "cpp",
+        "vector": "cpp"
     }
 }

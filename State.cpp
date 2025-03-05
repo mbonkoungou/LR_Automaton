@@ -37,19 +37,19 @@ bool State0::transition(Automaton &Automaton, Symbol *s) {
     switch (*s)
     {
     case VALUE:
-        Automaton.shift(s, new State3);
+        Automaton.shift(s, new State3());
         break;
     case OPENINGPARENTHESIS:
-        Automaton.shift(s, new State2);
+        Automaton.shift(s, new State2());
         break;   
     case EXPR:
-        Automaton.simpletransition(s, new State1);
+        Automaton.simpleTransition(s, new State1());
         break; 
     default:
         cout<<"Syntax error"<<endl;
-        break;
+        return false;
     }
-    return false;
+    return true;
 
 }
 
@@ -59,18 +59,18 @@ bool State1::transition(Automaton &Automaton, Symbol *s) {
     switch (*s)
     {
     case ADDITION:
-        Automaton.shift(s, new State4);
+        Automaton.shift(s, new State4());
         break;
     case MULTIPLICATION:
-        Automaton.shift(s, new State5);
+        Automaton.shift(s, new State5());
         break;
     case END:
         break;    
     default:
         cout<<"Syntax error"<<endl;
-        break;
+        return false;
     }
-    return false;
+    return true;
 
 }
 
@@ -80,19 +80,19 @@ bool State2::transition(Automaton &Automaton, Symbol *s) {
     switch (*s)
     {
     case VALUE:
-        Automaton.shift(s, new State3);
+        Automaton.shift(s, new State3());
         break;
     case OPENINGPARENTHESIS:
-        Automaton.shift(s, new State2);
+        Automaton.shift(s, new State2());
         break;
     case EXPR:
-        Automaton.simpletransition(s, new State6);
+        Automaton.simpleTransition(s, new State6());
         break;    
     default:
         cout<<"Syntax error"<<endl;
-        break;
+        return false;
     }
-    return false;
+    return true;
 
 }
 
@@ -102,22 +102,22 @@ bool State3::transition(Automaton &Automaton, Symbol *s) {
     switch (*s)
     {
     case ADDITION:
-        Automaton.reduction(1, new ADDITION);
+        Automaton.reduction(1, new Addition());
         break;
     case MULTIPLICATION:
-        Automaton.reduction(1, new MULTIPLICATION);
+        Automaton.reduction(1, new Multiplication());
         break;
     case CLOSINGPARENTHESIS:
-        Automaton.reduction(1, new CLOSINGPARENTHESIS);
+        Automaton.reduction(1, new ClosingParenthesis());
         break;
     case END:
-        Automaton.reduction(1, new END);
+        Automaton.reduction(1, new End());
         break;    
     default:
         cout<<"Syntax error"<<endl;
-        break;
+        return false;
     }
-    return false;
+    return true;
 
 }
 
@@ -127,19 +127,19 @@ bool State4::transition(Automaton &Automaton, Symbol *s) {
     switch (*s)
     {
     case VALUE:
-        Automaton.shift(s, new State3);
+        Automaton.shift(s, new State3());
         break;
     case OPENINGPARENTHESIS:
-        Automaton.shift(s, new State2);
+        Automaton.shift(s, new State2());
         break;
     case EXPR:
-        Automaton.simpletransition(s, new State7);
+        Automaton.simpleTransition(s, new State7());
         break;    
     default:
         cout<<"Syntax error"<<endl;
-        break;
+        return false;
     }
-    return false;
+    return true;
 
 }
 
@@ -149,19 +149,19 @@ bool State5::transition(Automaton &Automaton, Symbol *s) {
     switch (*s)
     {
     case VALUE:
-        Automaton.shift(s, new State3);
+        Automaton.shift(s, new State3());
         break;
     case OPENINGPARENTHESIS:
-        Automaton.shift(s, new State2);
+        Automaton.shift(s, new State2());
         break;
     case EXPR:
-        Automaton.simpletransition(s, new State8);
+        Automaton.simpleTransition(s, new State8());
         break;    
     default:
         cout<<"Syntax error"<<endl;
-        break;
+        return false;
     }
-    return false;
+    return true;
 
 }
 
@@ -171,19 +171,19 @@ bool State6::transition(Automaton &Automaton, Symbol *s) {
     switch (*s)
     {
     case ADDITION:
-        Automaton.shift(s, new State4);
+        Automaton.shift(s, new State4());
         break;
     case MULTIPLICATION:
-        Automaton.shift(s, new State5);
+        Automaton.shift(s, new State5());
         break;
     case CLOSINGPARENTHESIS:
-        Automaton.shift(s, new State9);
+        Automaton.shift(s, new State9());
         break;    
     default:
         cout<<"Syntax error"<<endl;
-        break;
+        return false;
     }
-    return false;
+    return true;
 
 }
 
@@ -193,22 +193,22 @@ bool State7::transition(Automaton &Automaton, Symbol *s) {
     switch (*s)
     {
     case ADDITION:
-        Automaton.reduction(3, new ADDITION);
+        Automaton.reduction(3, new Addition());
         break;
     case MULTIPLICATION:
-        Automaton.shift(s, new State5);
+        Automaton.shift(s, new State5());
         break;
     case CLOSINGPARENTHESIS:
-        Automaton.reduction(3, new CLOSINGPARENTHESIS);
+        Automaton.reduction(3, new ClosingParenthesis());
         break;
     case END:
-        Automaton.reduction(3, new END);
+        Automaton.reduction(3, new End());
         break;
     default:
         cout<<"Syntax error"<<endl;
-        break;
+        return false;
     }
-    return false;
+    return true;
 
 }
 
@@ -218,22 +218,22 @@ bool State8::transition(Automaton &Automaton, Symbol *s) {
     switch (*s)
     {
     case ADDITION:
-        Automaton.reduction(3, new ADDITION);
+        Automaton.reduction(3, new Addition());
         break;
     case MULTIPLICATION:
-        Automaton.reduction(3, new MULTIPLICATION);
+        Automaton.reduction(3, new Multiplication());
         break;
     case CLOSINGPARENTHESIS:
-        Automaton.reduction(3, new CLOSINGPARENTHESIS);
+        Automaton.reduction(3, new ClosingParenthesis());
         break;
     case END:
-        Automaton.reduction(3, new END);
+        Automaton.reduction(3, new End());
         break;
     default:
         cout<<"Syntax error"<<endl;
-        break;
+        return false;
     }
-    return false;
+    return true;
 
 }
 
@@ -243,21 +243,21 @@ bool State9::transition(Automaton &Automaton, Symbol *s) {
     switch (*s)
     {
     case ADDITION:
-        Automaton.reduction(3, new ADDITION);
+        Automaton.reduction(3, new Addition());
         break;
     case MULTIPLICATION:
-        Automaton.reduction(3, new MULTIPLICATION);
+        Automaton.reduction(3, new Multiplication());
         break;
     case CLOSINGPARENTHESIS:
-        Automaton.reduction(3, new CLOSINGPARENTHESIS);
+        Automaton.reduction(3, new ClosingParenthesis());
         break;
     case END:
-        Automaton.reduction(3, new END);
+        Automaton.reduction(3, new End());
         break;
     default:
         cout<<"Syntax error"<<endl;
-        break;
+        return false;
     }
-    return false;
+    return true;
 
 }

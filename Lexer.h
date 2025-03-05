@@ -8,11 +8,11 @@ using namespace std;
 class Lexer {
 
     public:
-        Lexer();
+        Lexer(string expression) : inputStream(expression) {}
         virtual ~Lexer();
 
     protected:
-        
+        string inputStream;
 
 };
 

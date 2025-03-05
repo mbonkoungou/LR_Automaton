@@ -5,14 +5,14 @@
 
 using namespace std;
 
-
+enum SYMBOL {VALUE, ADDITION, MULTIPLICATION, OPENINGPARENTHESIS, CLOSINGPARENTHESIS, END, EXPR};
 
 class Symbol {
 
     public:
-        Symbol(int id) : ident(id) {}
+        Symbol(int id);
         virtual ~Symbol() {}
-        void print();
+        virtual void print();
         operator int() const { return ident; }
 
     protected:
@@ -22,22 +22,52 @@ class Symbol {
 
 
 
-class Expr : public Symbol {
-    
+class ClosingParenthesis : public Symbol {
     public:
-        Expr():Symbol(EXPR) {}
-        virtual ~Expr() {}
-        virtual double eval(const map<string, double> &valeurs) = 0;
+        ClosingParenthesis();
+        virtual ~ClosingParenthesis();
+        void print() override;
+    
+    protected:
+    
+};
 
+
+
+class End : public Symbol {
+    public:
+        End();
+        virtual ~End();
+        void print() override;
+        
     protected:
 
 };
 
 
 
-class SimpleSymbol : public Symbol {
-
+class Expr : public Symbol {
+    public:
+        Expr();
+        virtual ~Expr();
+        virtual double eval(const map<string, double>& values) = 0;
+        virtual void display() = 0;
 };
+
+
+
+class Value : public Expr {
+    private:
+        double number;
+    public:
+        Value(double v);
+        ~Value() {}
+        double eval(const map<string, double>& values) override;
+        void display() override;
+};
+
+
+
 
 
 #endif // SYMBOL_H
