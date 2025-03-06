@@ -3,16 +3,23 @@
 
 using namespace std;
 
+#include <vector>
 
 
 class Lexer {
 
     public:
-        Lexer(string expression) : inputStream(expression) {}
+        Lexer(string expression);
         virtual ~Lexer();
+        void MoveForward();
+        Symbol* GetSymbol();
+        void ParseInputToSymbolStack();
 
     protected:
         string inputStream;
+        vector<Symbol*> symbolizedInputStack;
+        size_t cursor;
+        void ParseInputToSymbolList();
 
 };
 

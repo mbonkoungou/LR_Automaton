@@ -21,6 +21,11 @@ Automaton::~Automaton() {
         delete statestack.top();
         statestack.pop();
     }
+
+    while (!symbolstack.empty()) {
+        delete symbolstack.top();
+        symbolstack.pop();
+    }
 }
 
 
@@ -28,7 +33,7 @@ Automaton::~Automaton() {
 void Automaton::shift(Symbol *sy, State *st) {
     symbolstack.push(sy);
     statestack.push(st);
-    lexer->Avancer();
+    lexer->MoveForward();
 }
 
 
@@ -37,7 +42,6 @@ void Automaton::simpleTransition(Symbol *sy, State *st) {
     symbolstack.push(sy);
     statestack.push(st);
 }
-
 
 
 
@@ -60,3 +64,4 @@ void Automaton::analysis()
 {
 
 }
+

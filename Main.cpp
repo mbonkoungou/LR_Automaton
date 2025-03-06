@@ -8,13 +8,16 @@ using namespace std;
 
 int main() {
     string expression;
-    
     cout << "Enter the expression to analyze: ";
-    cin >> expression;
+    getline(cin, expression);
 
-    Automaton* automaton = new Automaton(expression);
-    automaton->analysis();
-    
-    delete automaton;
+    try {
+        Automaton* automaton = new Automaton(expression);
+        automaton->analysis();
+        delete automaton;
+    } catch (const runtime_error &e) {
+        cerr << "Lexer error: " << e.what() << endl;
+    }
+
     return 0;
 }
