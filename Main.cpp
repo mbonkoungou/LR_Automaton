@@ -15,8 +15,8 @@ int main() {
         Automaton* automaton = new Automaton(expression);
         automaton->Analysis();
         delete automaton;
-    } catch (const runtime_error &e) {
-        cerr << "Lexer error: " << e.what() << endl;
+    } catch (const exception &e) {
+        cerr << "Error: " << e.what() << endl;
     }
 
     return 0;

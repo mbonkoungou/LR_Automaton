@@ -7,20 +7,18 @@ using namespace std;
 
 
 class Lexer {
-
     public:
         Lexer(string expression);
         virtual ~Lexer();
         void MoveForward();
         Symbol* GetSymbol();
-        void ParseInputToSymbolStack();
+        void ParseInputToSymbolList();
 
     protected:
         string inputStream;
         vector<Symbol*> symbolizedInputStack;
         size_t cursor;
-        void ParseInputToSymbolList();
-
+        
 };
 
 #endif // LEXER_H

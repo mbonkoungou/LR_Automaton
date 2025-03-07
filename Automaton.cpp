@@ -1,8 +1,8 @@
 #include <iostream>
 #include <algorithm>
+#include <string> 
 
 #include "Automaton.h"
-
 
 
 
@@ -15,12 +15,10 @@ Automaton::Automaton(string inputStream) {
 
 Automaton::~Automaton() {
     delete lexer;
-
     while (!stateStack.empty()) {
         delete stateStack.top();
         stateStack.pop();
     }
-
     while (!symbolStack.empty()) {
         delete symbolStack.top();
         symbolStack.pop();
@@ -79,6 +77,7 @@ void Automaton::reduction(int n, Symbol *sy) {
 
     if (!stateStack.empty()) {
         stateStack.top()->transition(*this, sy);
+        symbolStack.push(sy);
     }
 }
 
@@ -88,26 +87,32 @@ void Automaton::Analysis() {
     bool analysis = false;
     Symbol* currentSymbol = lexer->GetSymbol();
 
-    while (!analysis) {
+    while (!analysis && currentSymbol) {
         State* currentState = stateStack.top();
 
         if (!currentState->transition(*this, currentSymbol)) {
-            cerr << "ERROR" << endl;
+            cerr << "ERROR: Invalid transition" << endl;
             return;
         }
 
         if ((int)(*lexer->GetSymbol()) == END && stateStack.size() == 1) {
             analysis = true;
+        } else {
+            currentSymbol = lexer->GetSymbol();
         }
     }
 
     Symbol* finalSymbol = symbolStack.top();
-    Expr* expression = dynamic_cast<Expr*>(finalSymbol);
-    if (expression) {
-        double result = expression->eval();
-        cout << "Result = " << result << endl;
+    if (finalSymbol) {
+        Expr* expression = dynamic_cast<Expr*>(finalSymbol);
+        if (expression) {
+            double result = expression->eval();
+            cout << "Result = " << result << endl;
+        } else {
+            cout << "ERROR: Invalid final expression" << endl;
+        }
     } else {
-        cout << "ERROR" << endl;
+        cout << "ERROR: No valid symbol found" << endl;
     }
 }
 
