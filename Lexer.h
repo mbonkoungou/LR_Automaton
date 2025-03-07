@@ -7,7 +7,6 @@ using namespace std;
 
 class Symbol;
 
-
 class Lexer {
     public:
         Lexer(string expression);
@@ -20,7 +19,7 @@ class Lexer {
         string inputStream;
         vector<Symbol*> symbolizedInputStack;
         size_t cursor;
-
+        
 };
 
 #endif // LEXER_H

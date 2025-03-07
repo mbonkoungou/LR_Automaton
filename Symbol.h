@@ -8,7 +8,6 @@ using namespace std;
 enum SYMBOL {VALUE, ADDITION, MULTIPLICATION, OPENINGPARENTHESIS, CLOSINGPARENTHESIS, END, EXPR};
 
 class Symbol {
-
     public:
         Symbol(int id);
         virtual ~Symbol();
@@ -27,11 +26,11 @@ class Addition : public Symbol {
         Addition();
         virtual ~Addition();
         void print() override;
-    
+
     protected:
 
 };
-    
+
 
 
 class Multiplication : public Symbol {
@@ -39,11 +38,11 @@ class Multiplication : public Symbol {
         Multiplication();
         virtual ~Multiplication();
         void print() override;
-    
+
     protected:
 
 };
-    
+
 
 
 class OpeningParenthesis : public Symbol {
@@ -55,17 +54,17 @@ class OpeningParenthesis : public Symbol {
     protected:
 
 };
-    
-    
+
+
 
 class ClosingParenthesis : public Symbol {
     public:
         ClosingParenthesis();
         virtual ~ClosingParenthesis();
         void print() override;
-    
+
     protected:
-    
+
 };
 
 
@@ -85,10 +84,11 @@ class End : public Symbol {
 class Expr : public Symbol {
     public:
         Expr();
+        Expr(int id);
         virtual ~Expr();
         virtual double eval() = 0;
         virtual void print() override = 0;
-    
+
     protected:
 
 };
@@ -101,7 +101,7 @@ class Value : public Expr {
         ~Value();
         double eval() override;
         void print() override;
-    
+
     protected:
         double number;
 
@@ -127,7 +127,7 @@ class PlusExpr : public ExprBin {
         PlusExpr(Expr* leftValue, Expr* rightValue);
         double eval() override;
         void print() override;
-    
+
     protected:
 
 };
@@ -146,6 +146,15 @@ class TimesExpr : public ExprBin {
 
 
 
+class NonTerminalValue : public Value {
+    public:
+        NonTerminalValue(double v);
+        ~NonTerminalValue();
+        double eval() override;
+        void print() override;
 
+    protected:
+
+};
 
 #endif // SYMBOL_H

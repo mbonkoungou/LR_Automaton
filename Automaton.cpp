@@ -3,12 +3,14 @@
 #include <string> 
 
 #include "Automaton.h"
+#include "State.h"
+#include "Lexer.h"
 
 
 
 Automaton::Automaton(string inputStream) {
     this->lexer = new Lexer(inputStream);
-    stateStack.push(new State0());
+    stateStack.push_back(new State0());
 }
 
 
@@ -16,36 +18,29 @@ Automaton::Automaton(string inputStream) {
 Automaton::~Automaton() {
     delete lexer;
     while (!stateStack.empty()) {
-        delete stateStack.top();
-        stateStack.pop();
+        delete stateStack.back();
+        stateStack.pop_back();
     }
     while (!symbolStack.empty()) {
-        delete symbolStack.top();
-        symbolStack.pop();
+        delete symbolStack.back();
+        symbolStack.pop_back();
     }
 }
 
 
 
 void Automaton::shift(Symbol *sy, State *st) {
-    symbolStack.push(sy);
-    stateStack.push(st);
+    symbolStack.push_back(sy);
+    stateStack.push_back(st);
     lexer->MoveForward();
-}
-
-
-
-void Automaton::simpleTransition(Symbol *sy, State *st) {
-    symbolStack.push(sy);
-    stateStack.push(st);
 }
 
 
 
 Symbol* Automaton::popSymbol() {
     if (!symbolStack.empty()) {
-        Symbol* top = symbolStack.top();
-        symbolStack.pop();
+        Symbol* top = symbolStack.back();
+        symbolStack.pop_back();
         return top;
     }
     cerr << "ERROR: Tried to pop from an empty symbol stack!" << endl;
@@ -54,11 +49,10 @@ Symbol* Automaton::popSymbol() {
 
 
 
-
 void Automaton::popAndDestroySymbol() {
     if (!symbolStack.empty()) {
-        Symbol* top = symbolStack.top();
-        symbolStack.pop();
+        Symbol* top = symbolStack.back();
+        symbolStack.pop_back();
         delete top;
     } else {
         cerr << "ERROR: Tried to pop and delete from an empty symbol stack!" << endl;
@@ -67,24 +61,46 @@ void Automaton::popAndDestroySymbol() {
 
 
 
+Symbol* Automaton::peekSymbol(size_t offset) const {
+    if (offset < symbolStack.size())
+        return symbolStack[symbolStack.size() - 1 - offset];
+    cerr << "ERROR: Peek offset out of range!" << endl;
+    return nullptr;
+}
+
+
 
 void Automaton::reduction(int n, Symbol *sy) {
     for (int i = 0; i < n; i++) {
         if (!stateStack.empty()) {
-            delete stateStack.top();
-            stateStack.pop();
+            delete stateStack.back();
+            stateStack.pop_back();
         }
         if (!symbolStack.empty()) {
-            delete symbolStack.top();
-            symbolStack.pop();
+            symbolStack.pop_back();
         }
     }
 
+    symbolStack.push_back(sy);
+    
     if (!stateStack.empty()) {
-        stateStack.top()->transition(*this, sy);
-        symbolStack.push(sy);
+        stateStack.back()->transition(*this, sy);
     }
 }
+
+
+
+void Automaton::gotoTransition(Symbol *sy, State *st) {
+    stateStack.push_back(st);
+}
+
+
+
+bool Automaton::isAccepting() const { return accepting; }
+
+
+
+void Automaton::setAccepting(bool acc) { accepting = acc; }
 
 
 
@@ -93,16 +109,19 @@ void Automaton::Analysis() {
     Symbol* currentSymbol = lexer->GetSymbol();
 
     while (!analysis && currentSymbol) {
-        State* currentState = stateStack.top();
+        State* currentState = stateStack.back();
 
         if (!currentState->transition(*this, currentSymbol)) {
-            cerr << "ERROR: Invalid transition from state " << stateStack.top()->getName() << " with symbol " << *currentSymbol << endl;
+            cerr << "ERROR: Invalid transition from state " << currentState->getName() << " with symbol ";
+            currentSymbol->print();
+            cerr << endl;
             return;
         }
 
-        if ((int)(*lexer->GetSymbol()) == END && stateStack.size() == 1) {
+        if (accepting) {
             analysis = true;
-        } else {
+        }
+        else {
             currentSymbol = lexer->GetSymbol();
             if (!currentSymbol) {
                 cerr << "ERROR: Lexer returned nullptr!" << endl;
@@ -112,7 +131,7 @@ void Automaton::Analysis() {
     }
 
     if (!symbolStack.empty()) {
-        Symbol* finalSymbol = symbolStack.top();
+        Symbol* finalSymbol = symbolStack.back();
         Expr* expression = dynamic_cast<Expr*>(finalSymbol);
         if (expression) {
             double result = expression->eval();
@@ -124,5 +143,3 @@ void Automaton::Analysis() {
         cerr << "ERROR: No valid symbol found" << endl;
     }
 }
-
-

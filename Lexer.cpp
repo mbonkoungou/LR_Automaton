@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <stdexcept>
 
-
 using namespace std;
 
 #include "Lexer.h"
@@ -51,7 +50,6 @@ void Lexer::ParseInputToSymbolList() {
             i++;
             continue;
         }
-
         if (c == '+') {
             symbolizedInputStack.push_back(new Addition());
             i++;
@@ -68,11 +66,9 @@ void Lexer::ParseInputToSymbolList() {
             symbolizedInputStack.push_back(new ClosingParenthesis());
             i++;
         }
-
         else if (isdigit(c)) {
             size_t length = 0;
-            while ((i + length) < inputStream.size() &&
-                   (isdigit(inputStream[i + length]) || inputStream[i + length] == '.')) {
+            while ((i + length) < inputStream.size() && (isdigit(inputStream[i + length]) || inputStream[i + length] == '.')) {
                 length++;
             }
             double value = stod(inputStream.substr(i, length));
@@ -85,8 +81,5 @@ void Lexer::ParseInputToSymbolList() {
             throw runtime_error(msg);
         }
     }
-
     symbolizedInputStack.push_back(new End());
 }
-
-

@@ -10,7 +10,7 @@ int main() {
     string expression;
     cout << "Enter the expression to analyze: ";
     getline(cin, expression);
-
+    
     try {
         Automaton* automaton = new Automaton(expression);
         automaton->Analysis();

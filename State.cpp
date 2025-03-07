@@ -1,19 +1,13 @@
 #include <iostream>
-
 using namespace std;
 
 #include "State.h"
 #include "Automaton.h"
-
-
+#include "Symbol.h"
 
 State::State(string name) : name(name) {}
 
-
-
 State::~State() {}
-
-
 
 void State::print() const {
     cout << "Current State: " << name << endl;
@@ -43,13 +37,15 @@ bool State0::transition(Automaton &automaton, Symbol *s) {
         automaton.shift(s, new State2());
         return true;
     case EXPR:
-        automaton.shift(s, new State1());
+        automaton.gotoTransition(s, new State1());
         return true;
     default:
         cerr << "Syntax error in State0" << endl;
         return false;
     }
 }
+
+
 
 bool State1::transition(Automaton &automaton, Symbol *s) {
     switch (*s) {
@@ -60,12 +56,15 @@ bool State1::transition(Automaton &automaton, Symbol *s) {
         automaton.shift(s, new State5());
         return true;
     case END:
+        automaton.setAccepting(true);
         return true;
     default:
         cerr << "Syntax error in State1" << endl;
         return false;
     }
 }
+
+
 
 bool State2::transition(Automaton &automaton, Symbol *s) {
     switch (*s) {
@@ -76,7 +75,7 @@ bool State2::transition(Automaton &automaton, Symbol *s) {
         automaton.shift(s, new State2());
         return true;
     case EXPR:
-        automaton.shift(s, new State6());
+        automaton.gotoTransition(s, new State6());
         return true;
     default:
         cerr << "Syntax error in State2" << endl;
@@ -84,22 +83,30 @@ bool State2::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
+
+
 bool State3::transition(Automaton &automaton, Symbol *s) {
     switch (*s) {
     case ADDITION:
     case MULTIPLICATION:
     case CLOSINGPARENTHESIS:
     case END: {
-        Symbol* valSym = automaton.popSymbol();
-        Expr* valExpr = dynamic_cast<Expr*>(valSym);
-        automaton.reduction(1, valExpr); 
-        return true;
+         Value* valToken = dynamic_cast<Value*>(automaton.peekSymbol(0));
+         if (!valToken) {
+             cerr << "Reduction error: token is not a Value." << endl;
+             return false;
+         }
+         NonTerminalValue* exprToken = new NonTerminalValue(valToken->eval());
+         automaton.reduction(1, exprToken);
+         return true;
     }
     default:
-        cerr << "Syntax error in State3" << endl;
-        return false;
+         cerr << "Syntax error in State3" << endl;
+         return false;
     }
 }
+
+
 
 bool State4::transition(Automaton &automaton, Symbol *s) {
     switch (*s) {
@@ -110,13 +117,15 @@ bool State4::transition(Automaton &automaton, Symbol *s) {
         automaton.shift(s, new State2());
         return true;
     case EXPR:
-        automaton.shift(s, new State7());
+        automaton.gotoTransition(s, new State7());
         return true;
     default:
         cerr << "Syntax error in State4" << endl;
         return false;
     }
 }
+
+
 
 bool State5::transition(Automaton &automaton, Symbol *s) {
     switch (*s) {
@@ -127,7 +136,7 @@ bool State5::transition(Automaton &automaton, Symbol *s) {
         automaton.shift(s, new State2());
         return true;
     case EXPR:
-        automaton.shift(s, new State8());
+        automaton.gotoTransition(s, new State8());
         return true;
     default:
         cerr << "Syntax error in State5" << endl;
@@ -135,8 +144,9 @@ bool State5::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
+
+
 bool State6::transition(Automaton &automaton, Symbol *s) {
-    cout << "State6 Transition with symbol: " << *s << endl;
     switch (*s) {
     case ADDITION:
         automaton.shift(s, new State4());
@@ -148,10 +158,11 @@ bool State6::transition(Automaton &automaton, Symbol *s) {
         automaton.shift(s, new State9());
         return true;
     default:
-        cerr << "Syntax error in State6, received unexpected symbol." << endl;
+        cerr << "Syntax error in State6" << endl;
         return false;
     }
 }
+
 
 
 bool State7::transition(Automaton &automaton, Symbol *s) {
@@ -162,11 +173,8 @@ bool State7::transition(Automaton &automaton, Symbol *s) {
     case ADDITION:
     case CLOSINGPARENTHESIS:
     case END: {
-        Symbol* rightSymbol = automaton.popSymbol(); 
-        Symbol* plusSymbol  = automaton.popSymbol();
-        Symbol* leftSymbol  = automaton.popSymbol();
-        Expr* rightExpr = dynamic_cast<Expr*>(rightSymbol);
-        Expr* leftExpr  = dynamic_cast<Expr*>(leftSymbol);
+        Expr* rightExpr = dynamic_cast<Expr*>(automaton.peekSymbol(0));
+        Expr* leftExpr  = dynamic_cast<Expr*>(automaton.peekSymbol(2));
         Expr* sumExpr = new PlusExpr(leftExpr, rightExpr);
         automaton.reduction(3, sumExpr);
         return true;
@@ -177,17 +185,16 @@ bool State7::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
+
+
 bool State8::transition(Automaton &automaton, Symbol *s) {
     switch (*s) {
     case ADDITION:
     case MULTIPLICATION:
     case CLOSINGPARENTHESIS:
     case END: {
-        Symbol* rightSymbol = automaton.popSymbol();
-        Symbol* multSymbol  = automaton.popSymbol();
-        Symbol* leftSymbol  = automaton.popSymbol();
-        Expr* rightExpr = dynamic_cast<Expr*>(rightSymbol);
-        Expr* leftExpr  = dynamic_cast<Expr*>(leftSymbol);
+        Expr* rightExpr = dynamic_cast<Expr*>(automaton.peekSymbol(0));
+        Expr* leftExpr  = dynamic_cast<Expr*>(automaton.peekSymbol(2));
         Expr* productExpr = new TimesExpr(leftExpr, rightExpr);
         automaton.reduction(3, productExpr);
         return true;
@@ -198,16 +205,15 @@ bool State8::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
+
+
 bool State9::transition(Automaton &automaton, Symbol *s) {
     switch (*s) {
     case ADDITION:
     case MULTIPLICATION:
     case CLOSINGPARENTHESIS:
     case END: {
-        Symbol* rightParen = automaton.popSymbol();
-        Symbol* exprSymbol = automaton.popSymbol();
-        Symbol* leftParen  = automaton.popSymbol();
-        Expr* e = dynamic_cast<Expr*>(exprSymbol);
+        Expr* e = dynamic_cast<Expr*>(automaton.peekSymbol(1));
         automaton.reduction(3, e);
         return true;
     }
@@ -216,4 +222,3 @@ bool State9::transition(Automaton &automaton, Symbol *s) {
         return false;
     }
 }
-
