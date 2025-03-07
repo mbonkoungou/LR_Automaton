@@ -1,8 +1,8 @@
 #include <iostream>
-#include <Symbol.h>
-#include <Lexer.h>
-#include <State.h>
-#include <Automaton.h>
+#include "Symbol.h"
+#include "Lexer.h"
+#include "State.h"
+#include "Automaton.h"
 
 using namespace std;
 

@@ -3,6 +3,7 @@
 using namespace std;
 
 #include "State.h"
+#include "Automaton.h"
 
 
 

@@ -11,7 +11,7 @@ class Symbol {
 
     public:
         Symbol(int id);
-        virtual ~Symbol() {}
+        virtual ~Symbol();
         virtual void print();
         operator int() const { return ident; }
 

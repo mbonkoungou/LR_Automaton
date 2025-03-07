@@ -3,8 +3,9 @@
 
 using namespace std;
 
-#include "Automaton.h"
 #include "Symbol.h"
+
+class Automaton;
 
 
 

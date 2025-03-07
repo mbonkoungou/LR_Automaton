@@ -1,34 +1,32 @@
+# Compiler
+CXX = g++
+CXXFLAGS = -std=c++11 -Wall -Wextra
+
+# Executable
+TARGET = lr_automaton
+
+# Source files
+SRCS = Automaton.cpp Lexer.cpp State.cpp Symbol.cpp Main.cpp
+OBJS = $(SRCS:.cpp=.o)
+
+# Header files
+HEADERS = Automaton.h Lexer.h State.h Symbol.h
+
 # Default target
-all: lr_automaton
+all: $(TARGET)
 
-# Link object files to create the executable
-lr_automaton: automaton.o lexer.o state.o symbol.o main.o
-	g++ -o lr_automaton lexer.o symbol.o state.o automaton.o main.o
+# Link the final executable
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
 
-# Compile Automaton.cpp to automaton.o
-automaton.o: Automaton.cpp Automaton.h
-	g++ -o automaton.o -c Automaton.cpp
+# Compile object files
+%.o: %.cpp $(HEADERS)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Compile lexer.cpp to lexer.o
-lexer.o: Lexer.cpp Lexer.h
-	g++ -o lexer.o -c Lexer.cpp
-
-# Compile State.cpp to state.o
-state.o: State.cpp State.h
-	g++ -o state.o -c State.cpp
-
-# Compile symbole.cpp to symbole.o
-symbol.o: Symbol.cpp Symbol.h
-	g++ -o symbol.o -c Symbol.cpp
-
-# Compile main.cpp to main.o
-main.o: Main.cpp Symbol.h Lexer.h State.h
-	g++ -o main.o -c Main.cpp
-
-# Clean target to remove object files
+# Clean object files
 clean:
-	rm -rf *.o
+	rm -f *.o
 
-# Mrproper target to clean everything, including the executable
+# Clean everything including the executable
 mrproper: clean
-	rm -rf analyse
+	rm -f $(TARGET)
