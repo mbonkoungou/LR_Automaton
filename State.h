@@ -16,6 +16,7 @@ class State {
         virtual ~State();
         void print() const;
         virtual bool transition(Automaton &automaton, Symbol *s) = 0;
+        string getName() const { return name; }
 
     protected:
         string name;

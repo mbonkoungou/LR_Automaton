@@ -136,6 +136,7 @@ bool State5::transition(Automaton &automaton, Symbol *s) {
 }
 
 bool State6::transition(Automaton &automaton, Symbol *s) {
+    cout << "State6 Transition with symbol: " << *s << endl;
     switch (*s) {
     case ADDITION:
         automaton.shift(s, new State4());
@@ -147,15 +148,18 @@ bool State6::transition(Automaton &automaton, Symbol *s) {
         automaton.shift(s, new State9());
         return true;
     default:
-        cerr << "Syntax error in State6" << endl;
+        cerr << "Syntax error in State6, received unexpected symbol." << endl;
         return false;
     }
 }
 
+
 bool State7::transition(Automaton &automaton, Symbol *s) {
     switch(*s) {
-    case ADDITION:
     case MULTIPLICATION:
+        automaton.shift(s, new State5());
+        return true;
+    case ADDITION:
     case CLOSINGPARENTHESIS:
     case END: {
         Symbol* rightSymbol = automaton.popSymbol(); 

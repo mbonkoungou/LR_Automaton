@@ -48,8 +48,10 @@ Symbol* Automaton::popSymbol() {
         symbolStack.pop();
         return top;
     }
+    cerr << "ERROR: Tried to pop from an empty symbol stack!" << endl;
     return nullptr;
 }
+
 
 
 
@@ -58,8 +60,11 @@ void Automaton::popAndDestroySymbol() {
         Symbol* top = symbolStack.top();
         symbolStack.pop();
         delete top;
+    } else {
+        cerr << "ERROR: Tried to pop and delete from an empty symbol stack!" << endl;
     }
 }
+
 
 
 
@@ -91,7 +96,7 @@ void Automaton::Analysis() {
         State* currentState = stateStack.top();
 
         if (!currentState->transition(*this, currentSymbol)) {
-            cerr << "ERROR: Invalid transition" << endl;
+            cerr << "ERROR: Invalid transition from state " << stateStack.top()->getName() << " with symbol " << *currentSymbol << endl;
             return;
         }
 
@@ -99,20 +104,25 @@ void Automaton::Analysis() {
             analysis = true;
         } else {
             currentSymbol = lexer->GetSymbol();
+            if (!currentSymbol) {
+                cerr << "ERROR: Lexer returned nullptr!" << endl;
+                return;
+            }
         }
     }
 
-    Symbol* finalSymbol = symbolStack.top();
-    if (finalSymbol) {
+    if (!symbolStack.empty()) {
+        Symbol* finalSymbol = symbolStack.top();
         Expr* expression = dynamic_cast<Expr*>(finalSymbol);
         if (expression) {
             double result = expression->eval();
             cout << "Result = " << result << endl;
         } else {
-            cout << "ERROR: Invalid final expression" << endl;
+            cerr << "ERROR: Invalid final expression" << endl;
         }
     } else {
-        cout << "ERROR: No valid symbol found" << endl;
+        cerr << "ERROR: No valid symbol found" << endl;
     }
 }
+
 
