@@ -33,231 +33,182 @@ State9::State9() : State("State9") {}
 
 
 
-bool State0::transition(Automaton &Automaton, Symbol *s) {
-    switch (*s)
-    {
+bool State0::transition(Automaton &automaton, Symbol *s) {
+    switch (*s) {
     case VALUE:
-        Automaton.shift(s, new State3());
-        break;
+        automaton.shift(s, new State3());
+        return true;
     case OPENINGPARENTHESIS:
-        Automaton.shift(s, new State2());
-        break;   
+        automaton.shift(s, new State2());
+        return true;
     case EXPR:
-        Automaton.simpleTransition(s, new State1());
-        break; 
+        automaton.shift(s, new State1());
+        return true;
     default:
-        cout<<"Syntax error"<<endl;
+        cerr << "Syntax error in State0" << endl;
         return false;
     }
-    return true;
-
 }
 
-
-
-bool State1::transition(Automaton &Automaton, Symbol *s) {
-    switch (*s)
-    {
+bool State1::transition(Automaton &automaton, Symbol *s) {
+    switch (*s) {
     case ADDITION:
-        Automaton.shift(s, new State4());
-        break;
+        automaton.shift(s, new State4());
+        return true;
     case MULTIPLICATION:
-        Automaton.shift(s, new State5());
-        break;
+        automaton.shift(s, new State5());
+        return true;
     case END:
-        break;    
+        return true;
     default:
-        cout<<"Syntax error"<<endl;
+        cerr << "Syntax error in State1" << endl;
         return false;
     }
-    return true;
-
 }
 
-
-
-bool State2::transition(Automaton &Automaton, Symbol *s) {
-    switch (*s)
-    {
+bool State2::transition(Automaton &automaton, Symbol *s) {
+    switch (*s) {
     case VALUE:
-        Automaton.shift(s, new State3());
-        break;
+        automaton.shift(s, new State3());
+        return true;
     case OPENINGPARENTHESIS:
-        Automaton.shift(s, new State2());
-        break;
+        automaton.shift(s, new State2());
+        return true;
     case EXPR:
-        Automaton.simpleTransition(s, new State6());
-        break;    
+        automaton.shift(s, new State6());
+        return true;
     default:
-        cout<<"Syntax error"<<endl;
+        cerr << "Syntax error in State2" << endl;
         return false;
     }
-    return true;
-
 }
 
-
-
-bool State3::transition(Automaton &Automaton, Symbol *s) {
-    switch (*s)
-    {
+bool State3::transition(Automaton &automaton, Symbol *s) {
+    switch (*s) {
     case ADDITION:
-        Automaton.reduction(1, new Addition());
-        break;
     case MULTIPLICATION:
-        Automaton.reduction(1, new Multiplication());
-        break;
     case CLOSINGPARENTHESIS:
-        Automaton.reduction(1, new ClosingParenthesis());
-        break;
-    case END:
-        Automaton.reduction(1, new End());
-        break;    
+    case END: {
+        Symbol* valSym = automaton.popSymbol();
+        Expr* valExpr = dynamic_cast<Expr*>(valSym);
+        automaton.reduction(1, valExpr); 
+        return true;
+    }
     default:
-        cout<<"Syntax error"<<endl;
+        cerr << "Syntax error in State3" << endl;
         return false;
     }
-    return true;
-
 }
 
-
-
-bool State4::transition(Automaton &Automaton, Symbol *s) {
-    switch (*s)
-    {
+bool State4::transition(Automaton &automaton, Symbol *s) {
+    switch (*s) {
     case VALUE:
-        Automaton.shift(s, new State3());
-        break;
+        automaton.shift(s, new State3());
+        return true;
     case OPENINGPARENTHESIS:
-        Automaton.shift(s, new State2());
-        break;
+        automaton.shift(s, new State2());
+        return true;
     case EXPR:
-        Automaton.simpleTransition(s, new State7());
-        break;    
+        automaton.shift(s, new State7());
+        return true;
     default:
-        cout<<"Syntax error"<<endl;
+        cerr << "Syntax error in State4" << endl;
         return false;
     }
-    return true;
-
 }
 
-
-
-bool State5::transition(Automaton &Automaton, Symbol *s) {
-    switch (*s)
-    {
+bool State5::transition(Automaton &automaton, Symbol *s) {
+    switch (*s) {
     case VALUE:
-        Automaton.shift(s, new State3());
-        break;
+        automaton.shift(s, new State3());
+        return true;
     case OPENINGPARENTHESIS:
-        Automaton.shift(s, new State2());
-        break;
+        automaton.shift(s, new State2());
+        return true;
     case EXPR:
-        Automaton.simpleTransition(s, new State8());
-        break;    
+        automaton.shift(s, new State8());
+        return true;
     default:
-        cout<<"Syntax error"<<endl;
+        cerr << "Syntax error in State5" << endl;
         return false;
     }
-    return true;
-
 }
 
-
-
-bool State6::transition(Automaton &Automaton, Symbol *s) {
-    switch (*s)
-    {
+bool State6::transition(Automaton &automaton, Symbol *s) {
+    switch (*s) {
     case ADDITION:
-        Automaton.shift(s, new State4());
-        break;
+        automaton.shift(s, new State4());
+        return true;
     case MULTIPLICATION:
-        Automaton.shift(s, new State5());
-        break;
+        automaton.shift(s, new State5());
+        return true;
     case CLOSINGPARENTHESIS:
-        Automaton.shift(s, new State9());
-        break;    
+        automaton.shift(s, new State9());
+        return true;
     default:
-        cout<<"Syntax error"<<endl;
+        cerr << "Syntax error in State6" << endl;
         return false;
     }
-    return true;
-
 }
 
-
-
-bool State7::transition(Automaton &Automaton, Symbol *s) {
-    switch (*s)
-    {
+bool State7::transition(Automaton &automaton, Symbol *s) {
+    switch(*s) {
     case ADDITION:
-        Automaton.reduction(3, new Addition());
-        break;
     case MULTIPLICATION:
-        Automaton.shift(s, new State5());
-        break;
     case CLOSINGPARENTHESIS:
-        Automaton.reduction(3, new ClosingParenthesis());
-        break;
-    case END:
-        Automaton.reduction(3, new End());
-        break;
+    case END: {
+        Symbol* rightSymbol = automaton.popSymbol(); 
+        Symbol* plusSymbol  = automaton.popSymbol();
+        Symbol* leftSymbol  = automaton.popSymbol();
+        Expr* rightExpr = dynamic_cast<Expr*>(rightSymbol);
+        Expr* leftExpr  = dynamic_cast<Expr*>(leftSymbol);
+        Expr* sumExpr = new PlusExpr(leftExpr, rightExpr);
+        automaton.reduction(3, sumExpr);
+        return true;
+    }
     default:
-        cout<<"Syntax error"<<endl;
+        cerr << "Syntax error in State7" << endl;
         return false;
     }
-    return true;
-
 }
 
-
-
-bool State8::transition(Automaton &Automaton, Symbol *s) {
-    switch (*s)
-    {
+bool State8::transition(Automaton &automaton, Symbol *s) {
+    switch (*s) {
     case ADDITION:
-        Automaton.reduction(3, new Addition());
-        break;
     case MULTIPLICATION:
-        Automaton.reduction(3, new Multiplication());
-        break;
     case CLOSINGPARENTHESIS:
-        Automaton.reduction(3, new ClosingParenthesis());
-        break;
-    case END:
-        Automaton.reduction(3, new End());
-        break;
+    case END: {
+        Symbol* rightSymbol = automaton.popSymbol();
+        Symbol* multSymbol  = automaton.popSymbol();
+        Symbol* leftSymbol  = automaton.popSymbol();
+        Expr* rightExpr = dynamic_cast<Expr*>(rightSymbol);
+        Expr* leftExpr  = dynamic_cast<Expr*>(leftSymbol);
+        Expr* productExpr = new TimesExpr(leftExpr, rightExpr);
+        automaton.reduction(3, productExpr);
+        return true;
+    }
     default:
-        cout<<"Syntax error"<<endl;
+        cerr << "Syntax error in State8" << endl;
         return false;
     }
-    return true;
-
 }
 
-
-
-bool State9::transition(Automaton &Automaton, Symbol *s) {
-    switch (*s)
-    {
+bool State9::transition(Automaton &automaton, Symbol *s) {
+    switch (*s) {
     case ADDITION:
-        Automaton.reduction(3, new Addition());
-        break;
     case MULTIPLICATION:
-        Automaton.reduction(3, new Multiplication());
-        break;
     case CLOSINGPARENTHESIS:
-        Automaton.reduction(3, new ClosingParenthesis());
-        break;
-    case END:
-        Automaton.reduction(3, new End());
-        break;
+    case END: {
+        Symbol* rightParen = automaton.popSymbol();
+        Symbol* exprSymbol = automaton.popSymbol();
+        Symbol* leftParen  = automaton.popSymbol();
+        Expr* e = dynamic_cast<Expr*>(exprSymbol);
+        automaton.reduction(3, e);
+        return true;
+    }
     default:
-        cout<<"Syntax error"<<endl;
+        cerr << "Syntax error in State9" << endl;
         return false;
     }
-    return true;
-
 }
+

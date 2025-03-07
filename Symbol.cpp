@@ -75,7 +75,7 @@ Value::~Value() {}
 
 Value::Value(double v) : number(v) {}
 
-double Value::eval(const map<string, double>& values) {
+double Value::eval() {
     return number;
 }
 
@@ -85,33 +85,33 @@ void Value::print() {
 
 
 
-ExprBin::ExprBin(Expr* l, Expr* r) : left(l), right(r) {}
+ExprBin::ExprBin(Expr* leftValue, Expr* rightValue) : leftExpr(leftValue), rightExpr(rightValue) {}
 
 ExprBin::~ExprBin() {
-    delete left;
-    delete right;
+    delete leftExpr;
+    delete rightExpr;
 }
 
 
 
-PlusExpr::PlusExpr(Expr* l, Expr* r) : ExprBin(l, r) {}
+PlusExpr::PlusExpr(Expr* leftValue, Expr* rightValue) : ExprBin(leftValue, rightValue) {}
 
-double PlusExpr::eval(const map<string, double>& vals) {
-    return left->eval(vals) + right->eval(vals);
+double PlusExpr::eval() {
+    return leftExpr->eval() + rightExpr->eval();
 }
 
 void PlusExpr::print() {
-    cout << "("; left->print(); cout << " + "; right->print(); cout << ")";
+    cout << "("; leftExpr->print(); cout << " + "; rightExpr->print(); cout << ")";
 }
 
 
 
-TimesExpr::TimesExpr(Expr* l, Expr* r) : ExprBin(l, r) {}
+TimesExpr::TimesExpr(Expr* leftValue, Expr* rightValue) : ExprBin(leftValue, rightValue) {}
 
-double TimesExpr::eval(const map<string, double>& vals) {
-    return left->eval(vals) * right->eval(vals);
+double TimesExpr::eval() {
+    return leftExpr->eval() * rightExpr->eval();
 }
 
 void TimesExpr::print() {
-    cout << "("; left->print(); cout << " * "; right->print(); cout << ")";
+    cout << "("; leftExpr->print(); cout << " * "; rightExpr->print(); cout << ")";
 }

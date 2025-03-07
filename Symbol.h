@@ -86,7 +86,7 @@ class Expr : public Symbol {
     public:
         Expr();
         virtual ~Expr();
-        virtual double eval(const map<string, double>& values) = 0;
+        virtual double eval() = 0;
         virtual void print() override = 0;
     
     protected:
@@ -99,7 +99,7 @@ class Value : public Expr {
     public:
         Value(double v);
         ~Value();
-        double eval(const map<string, double>& values) override;
+        double eval() override;
         void print() override;
     
     protected:
@@ -111,12 +111,12 @@ class Value : public Expr {
 
 class ExprBin : public Expr {    
     public:
-        ExprBin(Expr* l, Expr* r);
+        ExprBin(Expr* leftValue, Expr* rightValue);
         virtual ~ExprBin();
 
     protected:
-        Expr* left;
-        Expr* right;
+        Expr* leftExpr;
+        Expr* rightExpr;
 
 };
 
@@ -124,8 +124,8 @@ class ExprBin : public Expr {
 
 class PlusExpr : public ExprBin {
     public:
-        PlusExpr(Expr* l, Expr* r);
-        double eval(const std::map<std::string, double>& values) override;
+        PlusExpr(Expr* leftValue, Expr* rightValue);
+        double eval() override;
         void print() override;
     
     protected:
@@ -136,8 +136,8 @@ class PlusExpr : public ExprBin {
 
 class TimesExpr : public ExprBin {
     public:
-        TimesExpr(Expr* l, Expr* r);
-        double eval(const std::map<std::string, double>& values) override;
+        TimesExpr(Expr* leftValue, Expr* rightValue);
+        double eval() override;
         void print() override;
 
     protected:

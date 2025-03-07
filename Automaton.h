@@ -17,12 +17,14 @@ class Automaton {
         virtual ~Automaton();
         void shift(Symbol *sy, State *st);
         void simpleTransition(Symbol *sy, State *st);
+        Symbol* popSymbol();
+        void popAndDestroySymbol();
         void reduction(int n, Symbol *sy);
-        void analysis();
+        void Analysis();
 
     protected:
-        stack<Symbol *> symbolstack;
-        stack<State *> statestack;
+        stack<Symbol*> symbolStack;
+        stack<State*>  stateStack;
         Lexer *lexer;
 
 };

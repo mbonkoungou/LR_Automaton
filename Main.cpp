@@ -13,7 +13,7 @@ int main() {
 
     try {
         Automaton* automaton = new Automaton(expression);
-        automaton->analysis();
+        automaton->Analysis();
         delete automaton;
     } catch (const runtime_error &e) {
         cerr << "Lexer error: " << e.what() << endl;
