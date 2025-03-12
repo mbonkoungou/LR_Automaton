@@ -34,7 +34,7 @@ void Lexer::MoveForward() {
 
 void Lexer::ParseInputToSymbolList() {
     size_t i = 0;
-    int parenCount = 0; // To keep track of opening and closing parentheses
+    int parenCount = 0; // track number of '(' minus ')'
 
     while (i < inputStream.size()) {
         char c = inputStream[i];
@@ -42,55 +42,65 @@ void Lexer::ParseInputToSymbolList() {
             i++;
             continue;
         }
-        // Check for implicit multiplication when an opening parenthesis follows a number or a closing parenthesis.
+
+        // ---------------------------------------------------------
+        // Parentheses and implicit multiplication
+        // ---------------------------------------------------------
         if (c == '(') {
+            // Implicit multiplication: if previous token was a number or a ')'
             if (!symbolizedInputStack.empty()) {
                 Symbol* lastToken = symbolizedInputStack.back();
-                int tokenType = *lastToken; // Using the overloaded operator int()
+                int tokenType = *lastToken;
                 if (tokenType == VALUE || tokenType == CLOSINGPARENTHESIS) {
-                    cout << "Notice: Implicit multiplication detected. Inserting '*' before '('" << endl;
+                    cout << "Notice: Implicit multiplication detected. Inserting '*' before '('\n";
                     symbolizedInputStack.push_back(new Multiplication());
                 }
             }
             symbolizedInputStack.push_back(new OpeningParenthesis());
-            parenCount++;  // Increase the parenthesis counter.
+            parenCount++;
             i++;
             continue;
         }
         else if (c == ')') {
-            symbolizedInputStack.push_back(new ClosingParenthesis());
-            parenCount--;  // Decrease the parenthesis counter.
+            parenCount--;
             if (parenCount < 0) {
-                throw runtime_error("Error: Too many closing parentheses.");
+                // More closing than opening at this point.
+                throw runtime_error("Syntax error: too many closing parentheses at position " + to_string(i));
             }
+            symbolizedInputStack.push_back(new ClosingParenthesis());
             i++;
             continue;
         }
+        // ---------------------------------------------------------
+        // Operators + and *
+        // ---------------------------------------------------------
         else if (c == '+') {
-            // Look ahead for a valid operand after '+'
             size_t j = i + 1;
             while (j < inputStream.size() && isspace(inputStream[j])) j++;
-            if (j >= inputStream.size() || ( !isdigit(inputStream[j]) && inputStream[j] != '(')) {
-                throw runtime_error("Error: '+' operator missing an operand.");
+            if (j >= inputStream.size() || (!isdigit(inputStream[j]) && inputStream[j] != '(')) {
+                throw runtime_error("Error: '+' operator missing an operand at position " + to_string(i));
             }
             symbolizedInputStack.push_back(new Addition());
             i++;
             continue;
         }
         else if (c == '*') {
-            // Look ahead for a valid operand after '*'
             size_t j = i + 1;
             while (j < inputStream.size() && isspace(inputStream[j])) j++;
-            if (j >= inputStream.size() || ( !isdigit(inputStream[j]) && inputStream[j] != '(')) {
-                throw runtime_error("Error: '*' operator missing an operand.");
+            if (j >= inputStream.size() || (!isdigit(inputStream[j]) && inputStream[j] != '(')) {
+                throw runtime_error("Error: '*' operator missing an operand at position " + to_string(i));
             }
             symbolizedInputStack.push_back(new Multiplication());
             i++;
             continue;
         }
+        // ---------------------------------------------------------
+        // Numeric values
+        // ---------------------------------------------------------
         else if (isdigit(c)) {
             size_t length = 0;
-            while ((i + length) < inputStream.size() && (isdigit(inputStream[i + length]) || inputStream[i + length] == '.')) {
+            while ((i + length) < inputStream.size() &&
+                   (isdigit(inputStream[i + length]) || inputStream[i + length] == '.')) {
                 length++;
             }
             double value = stod(inputStream.substr(i, length));
@@ -98,14 +108,18 @@ void Lexer::ParseInputToSymbolList() {
             i += length;
             continue;
         }
+        // ---------------------------------------------------------
+        // Unexpected character
+        // ---------------------------------------------------------
         else {
-            string msg = "Unexpected character: ";
-            msg.push_back(c);
-            throw runtime_error(msg);
+            throw runtime_error(string("Unexpected character '") + c + "' at position " + to_string(i));
         }
     }
-    if (parenCount != 0) {
-        throw runtime_error("Error: Unbalanced parentheses in the expression.");
+
+    if (parenCount > 0) {
+        throw runtime_error("Syntax error: missing " + to_string(parenCount) + " closing parenthesis" + (parenCount > 1 ? "es" : ""));
     }
+
+    // Push the end-of-input symbol.
     symbolizedInputStack.push_back(new End());
 }

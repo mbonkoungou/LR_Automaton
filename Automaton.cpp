@@ -26,10 +26,12 @@ Automaton::~Automaton() {
 void Automaton::shift(Symbol *sy, State *st) {
     symbolStack.push_back(sy);
     stateStack.push_back(st);
-    // Log the shift operation
-    cout << "Shift: ";
+    // Uncomment the following lines to enable debug printing for shift operations:
+    /*
+    std::cout << "Shift: ";
     sy->print();
-    cout << " | New state: " << st->getName() << endl;
+    std::cout << " | New state: " << st->getName() << std::endl;
+    */
     lexer->MoveForward();
 }
 
@@ -39,7 +41,7 @@ Symbol* Automaton::popSymbol() {
         symbolStack.pop_back();
         return top;
     }
-    cerr << "ERROR: Tried to pop from an empty symbol stack!" << endl;
+    std::cerr << "ERROR: Tried to pop from an empty symbol stack!" << std::endl;
     return nullptr;
 }
 
@@ -49,21 +51,24 @@ void Automaton::popAndDestroySymbol() {
         symbolStack.pop_back();
         delete top;
     } else {
-        cerr << "ERROR: Tried to pop and delete from an empty symbol stack!" << endl;
+        std::cerr << "ERROR: Tried to pop and delete from an empty symbol stack!" << std::endl;
     }
 }
 
 Symbol* Automaton::peekSymbol(size_t offset) const {
     if (offset < symbolStack.size())
         return symbolStack[symbolStack.size() - 1 - offset];
-    cerr << "ERROR: Peek offset out of range!" << endl;
+    std::cerr << "ERROR: Peek offset out of range!" << std::endl;
     return nullptr;
 }
 
 void Automaton::reduction(int n, Symbol *sy) {
-    cout << "Reduction: Combining " << n << " symbol(s) into: ";
+    // Uncomment the following line to enable debug printing for reductions:
+    /*
+    std::cout << "Reduction: Combining " << n << " symbol(s) into: ";
     sy->print();
-    cout << endl;
+    std::cout << std::endl;
+    */
     for (int i = 0; i < n; i++) {
         if (!stateStack.empty()) {
             delete stateStack.back();
@@ -73,6 +78,7 @@ void Automaton::reduction(int n, Symbol *sy) {
             symbolStack.pop_back();
         }
     }
+
     symbolStack.push_back(sy);
     
     if (!stateStack.empty()) {
@@ -81,8 +87,10 @@ void Automaton::reduction(int n, Symbol *sy) {
 }
 
 void Automaton::gotoTransition(Symbol *sy, State *st) {
+    (void)sy; // Mark parameter as unused.
     stateStack.push_back(st);
-    cout << "Goto Transition: Pushing new state: " << st->getName() << endl;
+    // Uncomment the following line to enable debug printing for goto transitions:
+    // std::cout << "Goto Transition: Pushing new state: " << st->getName() << std::endl;
 }
 
 bool Automaton::isAccepting() const { return accepting; }
@@ -94,15 +102,19 @@ void Automaton::Analysis() {
     Symbol* currentSymbol = lexer->GetSymbol();
 
     while (!analysis && currentSymbol) {
+        // Uncomment the following block to show current state and symbol:
+        /*
         State* currentState = stateStack.back();
-        cout << "Current State: " << currentState->getName() << " | Processing symbol: ";
+        std::cout << "Current State: " << currentState->getName() << " | Processing symbol: ";
         currentSymbol->print();
-        cout << endl;
+        std::cout << std::endl;
+        */
+        State* currentState = stateStack.back();
 
         if (!currentState->transition(*this, currentSymbol)) {
-            cerr << "ERROR: Invalid transition from state " << currentState->getName() << " with symbol ";
+            std::cerr << "ERROR: Invalid transition from state " << currentState->getName() << " with symbol ";
             currentSymbol->print();
-            cerr << endl;
+            std::cerr << std::endl;
             return;
         }
 
@@ -112,7 +124,7 @@ void Automaton::Analysis() {
         else {
             currentSymbol = lexer->GetSymbol();
             if (!currentSymbol) {
-                cerr << "ERROR: Lexer returned nullptr!" << endl;
+                std::cerr << "ERROR: Lexer returned nullptr!" << std::endl;
                 return;
             }
         }
@@ -123,14 +135,14 @@ void Automaton::Analysis() {
         Expr* expression = dynamic_cast<Expr*>(finalSymbol);
         if (expression) {
             double result = expression->eval();
-            cout << "Result = " << result << endl;
-            cout << "Final Syntax Tree: ";
-            expression->print();
-            cout << endl;
+            std::cout << "Result = " << result << std::endl;
+            // Print final syntax tree:
+            std::cout << "\nFinal Syntax Tree:" << std::endl;
+            expression->printTree();
         } else {
-            cerr << "ERROR: Invalid final expression" << endl;
+            std::cerr << "ERROR: Invalid final expression" << std::endl;
         }
     } else {
-        cerr << "ERROR: No valid symbol found" << endl;
+        std::cerr << "ERROR: No valid symbol found" << std::endl;
     }
 }
