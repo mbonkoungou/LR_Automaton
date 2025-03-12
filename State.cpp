@@ -13,8 +13,6 @@ void State::print() const {
     cout << "Current State: " << name << endl;
 }
 
-
-
 State0::State0() : State("State0") {}
 State1::State1() : State("State1") {}
 State2::State2() : State("State2") {}
@@ -26,9 +24,10 @@ State7::State7() : State("State7") {}
 State8::State8() : State("State8") {}
 State9::State9() : State("State9") {}
 
-
-
 bool State0::transition(Automaton &automaton, Symbol *s) {
+    cout << "State0 handling symbol: ";
+    s->print();
+    cout << endl;
     switch (*s) {
     case VALUE:
         automaton.shift(s, new State3());
@@ -45,9 +44,10 @@ bool State0::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
-
-
 bool State1::transition(Automaton &automaton, Symbol *s) {
+    cout << "State1 handling symbol: ";
+    s->print();
+    cout << endl;
     switch (*s) {
     case ADDITION:
         automaton.shift(s, new State4());
@@ -64,9 +64,10 @@ bool State1::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
-
-
 bool State2::transition(Automaton &automaton, Symbol *s) {
+    cout << "State2 handling symbol: ";
+    s->print();
+    cout << endl;
     switch (*s) {
     case VALUE:
         automaton.shift(s, new State3());
@@ -83,9 +84,10 @@ bool State2::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
-
-
 bool State3::transition(Automaton &automaton, Symbol *s) {
+    cout << "State3 handling symbol: ";
+    s->print();
+    cout << endl;
     switch (*s) {
     case ADDITION:
     case MULTIPLICATION:
@@ -106,9 +108,10 @@ bool State3::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
-
-
 bool State4::transition(Automaton &automaton, Symbol *s) {
+    cout << "State4 handling symbol: ";
+    s->print();
+    cout << endl;
     switch (*s) {
     case VALUE:
         automaton.shift(s, new State3());
@@ -125,9 +128,10 @@ bool State4::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
-
-
 bool State5::transition(Automaton &automaton, Symbol *s) {
+    cout << "State5 handling symbol: ";
+    s->print();
+    cout << endl;
     switch (*s) {
     case VALUE:
         automaton.shift(s, new State3());
@@ -144,9 +148,10 @@ bool State5::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
-
-
 bool State6::transition(Automaton &automaton, Symbol *s) {
+    cout << "State6 handling symbol: ";
+    s->print();
+    cout << endl;
     switch (*s) {
     case ADDITION:
         automaton.shift(s, new State4());
@@ -163,9 +168,10 @@ bool State6::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
-
-
 bool State7::transition(Automaton &automaton, Symbol *s) {
+    cout << "State7 handling symbol: ";
+    s->print();
+    cout << endl;
     switch(*s) {
     case MULTIPLICATION:
         automaton.shift(s, new State5());
@@ -185,9 +191,10 @@ bool State7::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
-
-
 bool State8::transition(Automaton &automaton, Symbol *s) {
+    cout << "State8 handling symbol: ";
+    s->print();
+    cout << endl;
     switch (*s) {
     case ADDITION:
     case MULTIPLICATION:
@@ -205,9 +212,10 @@ bool State8::transition(Automaton &automaton, Symbol *s) {
     }
 }
 
-
-
 bool State9::transition(Automaton &automaton, Symbol *s) {
+    cout << "State9 handling symbol: ";
+    s->print();
+    cout << endl;
     switch (*s) {
     case ADDITION:
     case MULTIPLICATION:

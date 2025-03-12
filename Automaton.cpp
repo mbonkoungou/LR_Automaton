@@ -6,14 +6,10 @@
 #include "State.h"
 #include "Lexer.h"
 
-
-
 Automaton::Automaton(string inputStream) {
     this->lexer = new Lexer(inputStream);
     stateStack.push_back(new State0());
 }
-
-
 
 Automaton::~Automaton() {
     delete lexer;
@@ -27,15 +23,15 @@ Automaton::~Automaton() {
     }
 }
 
-
-
 void Automaton::shift(Symbol *sy, State *st) {
     symbolStack.push_back(sy);
     stateStack.push_back(st);
+    // Log the shift operation
+    cout << "Shift: ";
+    sy->print();
+    cout << " | New state: " << st->getName() << endl;
     lexer->MoveForward();
 }
-
-
 
 Symbol* Automaton::popSymbol() {
     if (!symbolStack.empty()) {
@@ -47,8 +43,6 @@ Symbol* Automaton::popSymbol() {
     return nullptr;
 }
 
-
-
 void Automaton::popAndDestroySymbol() {
     if (!symbolStack.empty()) {
         Symbol* top = symbolStack.back();
@@ -59,8 +53,6 @@ void Automaton::popAndDestroySymbol() {
     }
 }
 
-
-
 Symbol* Automaton::peekSymbol(size_t offset) const {
     if (offset < symbolStack.size())
         return symbolStack[symbolStack.size() - 1 - offset];
@@ -68,9 +60,10 @@ Symbol* Automaton::peekSymbol(size_t offset) const {
     return nullptr;
 }
 
-
-
 void Automaton::reduction(int n, Symbol *sy) {
+    cout << "Reduction: Combining " << n << " symbol(s) into: ";
+    sy->print();
+    cout << endl;
     for (int i = 0; i < n; i++) {
         if (!stateStack.empty()) {
             delete stateStack.back();
@@ -80,7 +73,6 @@ void Automaton::reduction(int n, Symbol *sy) {
             symbolStack.pop_back();
         }
     }
-
     symbolStack.push_back(sy);
     
     if (!stateStack.empty()) {
@@ -88,21 +80,14 @@ void Automaton::reduction(int n, Symbol *sy) {
     }
 }
 
-
-
 void Automaton::gotoTransition(Symbol *sy, State *st) {
     stateStack.push_back(st);
+    cout << "Goto Transition: Pushing new state: " << st->getName() << endl;
 }
-
-
 
 bool Automaton::isAccepting() const { return accepting; }
 
-
-
 void Automaton::setAccepting(bool acc) { accepting = acc; }
-
-
 
 void Automaton::Analysis() {
     bool analysis = false;
@@ -110,6 +95,9 @@ void Automaton::Analysis() {
 
     while (!analysis && currentSymbol) {
         State* currentState = stateStack.back();
+        cout << "Current State: " << currentState->getName() << " | Processing symbol: ";
+        currentSymbol->print();
+        cout << endl;
 
         if (!currentState->transition(*this, currentSymbol)) {
             cerr << "ERROR: Invalid transition from state " << currentState->getName() << " with symbol ";
@@ -136,6 +124,9 @@ void Automaton::Analysis() {
         if (expression) {
             double result = expression->eval();
             cout << "Result = " << result << endl;
+            cout << "Final Syntax Tree: ";
+            expression->print();
+            cout << endl;
         } else {
             cerr << "ERROR: Invalid final expression" << endl;
         }
